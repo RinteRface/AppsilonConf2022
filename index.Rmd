@@ -140,7 +140,7 @@ Possible answers:
 
 --
 
-This must stop `r ji("smiling_imp")`!
+This must stop `r ji("smiling_imp")`! But how ❓
 
 ---
 class: header_background
@@ -161,30 +161,6 @@ For Shiny apps:
 --
 
 In practice, a few apps meet all these requirements `r ji("smiling_imp")`.
-
----
-class: header_background
-# Why and when do we need validation?
-
-<br/>
-
-.center[
-<img src="assets/images/svg/404.svg" width="20%" style="display: block; margin: auto;" class="svg-img"/>
-]
-
---
-
-.small[
-In Pharma, we have a mission to improve and extend people's lives. We are responsible for our products' __safety__ and __efficacy__:
-
-- __GxP__ usage (Good clinical practices).
-- __DMC__ submission : data monitoring committee with external members.
-- ...
-]
-
---
-
-How do we transition from a __prototype__ to a __production-ready__ tool❓
 
 ---
 class: inverse center middle title-slide-without-bg title-slide
@@ -260,50 +236,41 @@ class: inverse center middle title-slide-without-bg title-slide
 
 ---
 class: header_background
-# What is CI/CD?
+# What, why and how?
 
 <br>
 
-- __Automated__ process:
-
-  - Continuous integration: automatically __check__ new features. 🏥
-  - Continuous deployment: automatically __deploy__ content. ✉️
-
+.panelset[
+.panel[.panel-name[What]
+- Continuous integration: automatically __check__ new features. 🏥
+- Continuous deployment: automatically __deploy__ content. ✉️
 - Running on a __remote__ environment ☁️:
   - [Github Actions](https://github.com/features/actions).
   - [Jenkins](https://www.jenkins.io/).
   - [Gitlab CI/CD](https://docs.gitlab.com/ee/ci/).
   
----
-class: header_background
-# Benefits of using CI/CD?
+]
 
-<br>
-
+.panel[.panel-name[Benefits] 
 - __Automated__.
-- More __reproducible__.
+- More __reproducible__ (more os/R flavors available).
 - __Time saver__.
 - Less duplication.
+]
 
----
-class: header_background
-# How to activate CI/CD features?
-
-<br>
-
+.panel[.panel-name[How?] 
 Not easy 😢
-
---
 
 - Select __DevOps__ platform (GitLab, GitHub, ...).
 - Add __version control__ (git knowledge).
 - Build custom GitLab runner (optional).
-- Write __CI/CD instructions__ in yaml file (better support for GitHub).
+- Write __CI/CD instructions__ (better support for GitHub).
 - Enjoy ...
 
---
-
 Can't we make things easier❓
+]
+
+]
 
 ---
 class: inverse center middle title-slide-without-bg title-slide
@@ -318,7 +285,8 @@ class: header_background
 .panelset[
 .panel[.panel-name[Purpose]
 
-- __Eases__ Shiny Apps validation by __providing__ plug and play CI/CD pipelines:
+- __Eases__ Shiny Apps validation:
+  - __Provides__ plug and play CI/CD pipelines.
   - __Lints__ and __checks__ the package code.
   - Performs a Shiny app __crash test__.
   - Displays __outputs__ differences: plots, htmlwidgets.
@@ -328,32 +296,58 @@ All is __integrated__ into a nice HTML report.
 
 ]
 
-.panel[.panel-name[Flexible]
+.panel[.panel-name[Requirements]
 
-.center[
-```{r shinyvalidator-overview, echo=FALSE, out.width='45%'}
-knitr::include_graphics("assets/images/png/shinyValidator.png")
-```
-]
-
+- Requires a __package__, especially with `{golem}`.
+- Control R __dependencies__ with `{renv}`.
+- Requires __git__ + remote repository.
+- Have __unit tests__. 
 ]
 
 .panel[.panel-name[Setup]
-
-- `{shinyValidator}` requires `R >= 4.0.0`.
-- Must be run within a package, especially with `{golem}`.
-- Control R package dependencies with `{renv}` (recommended).
 - Install it:
 .small[
 ```{r, eval=FALSE}
 remotes::install_github("Novartis/shinyValidator")
-devtools::load_all()
 ```
 ]
-- Run `use_validator()`. Set up all required elements.
+- Run `use_validator("github")` (for Github Actions).
+- `devtools::document()`.
+- Run `renv::snapshot()` to capture dependencies.
+- Commit, push and enjoy. 🚀
+]
 
 ]
 
+---
+class: header_background
+# {shinyValidator}: audit app
+
+<br>
+
+`audit_app()` main package function:
+
+.pull-left.small[
+```r
+audit_app(
+  timeout = 5,
+  headless_actions = NULL,
+  workers = 5,
+  scope = c("DMC", "POC"),
+  output_validation = TRUE,
+  coverage = TRUE,
+  load_testing = TRUE,
+  profile_code = TRUE,
+  check_reactivity = TRUE,
+  flow = TRUE
+)
+```
+]
+
+.pull-right[
+```{r shinyvalidator-overview, echo=FALSE, out.width='100%'}
+knitr::include_graphics("assets/images/png/shinyValidator.png")
+```
 ]
 
 ---

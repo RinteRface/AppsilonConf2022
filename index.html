@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>slides.knit</title>
+    <title>{shinyValidator}: toward a new audit process for Shiny apps quality through CI/CD</title>
     <meta charset="utf-8" />
+    <meta name="author" content="SCC" />
+    <meta name="date" content="2022-04-28" />
     <script src="assets/libs/header-attrs/header-attrs.js"></script>
     <link href="assets/libs/tile-view/tile-view.css" rel="stylesheet" />
     <script src="assets/libs/tile-view/tile-view.js"></script>
@@ -41,7 +43,7 @@ class: inverse, center, title-slide, middle
 
 # {shinyValidator}: toward a new audit process for Shiny apps quality through CI/CD
 
-### 2022-04-06
+### AppsilonConf 2022 2022-04-28
 
 .flex.tc[
 .w-30.mr3.center[
@@ -120,7 +122,7 @@ Possible answers:
 
 --
 
-This must stop 😈!
+This must stop 😈! But how ❓
 
 ---
 class: header_background
@@ -141,30 +143,6 @@ For Shiny apps:
 --
 
 In practice, a few apps meet all these requirements 😈.
-
----
-class: header_background
-# Why and when do we need validation?
-
-&lt;br/&gt;
-
-.center[
-&lt;img src="assets/images/svg/404.svg" width="20%" style="display: block; margin: auto;" class="svg-img"/&gt;
-]
-
---
-
-.small[
-In Pharma, we have a mission to improve and extend people's lives. We are responsible for our products' __safety__ and __efficacy__:
-
-- __GxP__ usage (Good clinical practices).
-- __DMC__ submission : data monitoring committee with external members.
-- ...
-]
-
---
-
-How do we transition from a __prototype__ to a __production-ready__ tool❓
 
 ---
 class: inverse center middle title-slide-without-bg title-slide
@@ -238,50 +216,41 @@ class: inverse center middle title-slide-without-bg title-slide
 
 ---
 class: header_background
-# What is CI/CD?
+# What, why and how?
 
 &lt;br&gt;
 
-- __Automated__ process:
-
-  - Continuous integration: automatically __check__ new features. 🏥
-  - Continuous deployment: automatically __deploy__ content. ✉️
-
+.panelset[
+.panel[.panel-name[What]
+- Continuous integration: automatically __check__ new features. 🏥
+- Continuous deployment: automatically __deploy__ content. ✉️
 - Running on a __remote__ environment ☁️:
   - [Github Actions](https://github.com/features/actions).
   - [Jenkins](https://www.jenkins.io/).
   - [Gitlab CI/CD](https://docs.gitlab.com/ee/ci/).
   
----
-class: header_background
-# Benefits of using CI/CD?
+]
 
-&lt;br&gt;
-
+.panel[.panel-name[Benefits] 
 - __Automated__.
-- More __reproducible__.
+- More __reproducible__ (more os/R flavors available).
 - __Time saver__.
 - Less duplication.
+]
 
----
-class: header_background
-# How to activate CI/CD features?
-
-&lt;br&gt;
-
+.panel[.panel-name[How?] 
 Not easy 😢
-
---
 
 - Select __DevOps__ platform (GitLab, GitHub, ...).
 - Add __version control__ (git knowledge).
 - Build custom GitLab runner (optional).
-- Write __CI/CD instructions__ in yaml file (better support for GitHub).
+- Write __CI/CD instructions__ (better support for GitHub).
 - Enjoy ...
 
---
-
 Can't we make things easier❓
+]
+
+]
 
 ---
 class: inverse center middle title-slide-without-bg title-slide
@@ -296,7 +265,8 @@ class: header_background
 .panelset[
 .panel[.panel-name[Purpose]
 
-- __Eases__ Shiny Apps validation by __providing__ plug and play CI/CD pipelines:
+- __Eases__ Shiny Apps validation:
+  - __Provides__ plug and play CI/CD pipelines.
   - __Lints__ and __checks__ the package code.
   - Performs a Shiny app __crash test__.
   - Displays __outputs__ differences: plots, htmlwidgets.
@@ -306,31 +276,57 @@ All is __integrated__ into a nice HTML report.
 
 ]
 
-.panel[.panel-name[Flexible]
+.panel[.panel-name[Requirements]
 
-.center[
-&lt;img src="assets/images/png/shinyValidator.png" width="45%" /&gt;
-]
-
+- Requires a __package__, especially with `{golem}`.
+- Control R __dependencies__ with `{renv}`.
+- Requires __git__ + remote repository.
+- Have __unit tests__. 
 ]
 
 .panel[.panel-name[Setup]
-
-- `{shinyValidator}` requires `R &gt;= 4.0.0`.
-- Must be run within a package, especially with `{golem}`.
-- Control R package dependencies with `{renv}` (recommended).
 - Install it:
 .small[
 
 ```r
 remotes::install_github("Novartis/shinyValidator")
-devtools::load_all()
 ```
 ]
-- Run `use_validator()`. Set up all required elements.
+- Run `use_validator("github")` (for Github Actions).
+- `devtools::document()`.
+- Run `renv::snapshot()` to capture dependencies.
+- Commit, push and enjoy. 🚀
+]
 
 ]
 
+---
+class: header_background
+# {shinyValidator}: audit app
+
+&lt;br&gt;
+
+`audit_app()` main package function:
+
+.pull-left.small[
+```r
+audit_app(
+  timeout = 5,
+  headless_actions = NULL,
+  workers = 5,
+  scope = c("DMC", "POC"),
+  output_validation = TRUE,
+  coverage = TRUE,
+  load_testing = TRUE,
+  profile_code = TRUE,
+  check_reactivity = TRUE,
+  flow = TRUE
+)
+```
+]
+
+.pull-right[
+&lt;img src="assets/images/png/shinyValidator.png" width="100%" /&gt;
 ]
 
 ---

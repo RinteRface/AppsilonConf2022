@@ -55,9 +55,9 @@ xaringanExtra::use_extra_styles(
 )
 ```
 
-# {shinyValidator}: toward a new audit process for Shiny apps quality through CI/CD
+## {shinyValidator}: toward a new audit process for Shiny apps quality through CI/CD
 
-### AppsilonConf 2022 `r Sys.Date()`
+###### AppsilonConf 2022 `r format(Sys.time(), "%b %d")`
 
 .flex.tc[
 .w-30.mr3.center[
@@ -75,19 +75,16 @@ js4shiny::html_setup(stylize = c("fonts", "variables", "code"))
 ```
 
 ---
-class: inverse center middle title-slide-without-bg title-slide
-# 1. Introduction
-
----
 class: header_background
 # <img src="assets/images/svg/shiny.svg" width="5%" style="display: inline; margin: auto;" class="svg-img"/> apps may look amazing ...
 
 <br/>
 
-.left[
-- `{Shiny}` is about __10__ years old 😲😲😲. 
-- Today, many tools can make your apps __shining__...
-]
+`{Shiny}` is about __10__ years old 😲😲😲. 
+
+--
+
+Today, many tools can make your apps __shining__...
 
 .center[
 ```{r, echo = FALSE, out.width='20%'}
@@ -135,12 +132,12 @@ Possible answers:
 
 - __Quickly__ developed, no planning 😱
 - No code quality __management__ 😱
-- No __tests__ 😱
+- No __tests__ 😱 
 - ...
 
 --
 
-This must stop `r ji("smiling_imp")`! But how ❓
+This must stop `r ji("smiling_imp")`!
 
 ---
 class: header_background
@@ -160,11 +157,12 @@ For Shiny apps:
 
 --
 
-In practice, a few apps meet all these requirements `r ji("smiling_imp")`.
+In practice, a few apps meet all these requirements `r ji("smiling_imp")`. 
+How do we transition from __prototypes__ to __production-ready__ tools ❓
 
 ---
 class: inverse center middle title-slide-without-bg title-slide
-# 2. Production Ready Shiny Apps
+# 1. Production Ready Shiny Apps
 
 ```{r, echo = FALSE, out.width='20%', fig.align='center'}
 knitr::include_graphics("assets/images/jpeg/engineering-shiny.jpg")

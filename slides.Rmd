@@ -1,0 +1,381 @@
+---
+title: "{shinyValidator}: toward a new audit process for Shiny apps quality through CI/CD"
+subtitle: '`r Sys.Date()`'
+author: "SCC"
+date: '`r Sys.Date()`'
+output:
+  xaringan::moon_reader:
+    lib_dir: assets/libs
+    css:
+      - assets/css/js4shiny-xaringan-base.css
+      - assets/css/tachyons.min.css
+      #- assets/css/animate.css
+      - assets/css/js4shiny-xaringan-extra.css
+      - assets/css/custom.css
+      - https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css
+    includes:
+      after_body: assets/html/js4shiny-includes.html
+    seal: false
+    chakra: assets/js/remark-latest.min.js
+    nature:
+      beforeInit: [
+        "https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js",
+        "assets/js/custom.js"
+      ]
+      ratio: 16:9
+      slideNumberFormat: "%current%"
+      highlightStyle: docco
+      highlightLines: true
+      countIncrementalSlides: false
+---
+class: inverse, center, title-slide, middle
+
+```{r setup, include=FALSE}
+library(emo)
+library(shiny)
+library(countdown)
+library(magrittr)
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(
+  fig.width = 10, fig.height = 6, fig.retina = 2,
+  warning = FALSE, message = FALSE
+)
+
+#xaringanExtra::use_search(show_icon = TRUE)
+xaringanExtra::use_tile_view()
+xaringanExtra::use_share_again()
+xaringanExtra::use_clipboard()
+xaringanExtra::use_tachyons()
+xaringanExtra::use_fit_screen()
+xaringanExtra::use_panelset()
+
+xaringanExtra::use_extra_styles(
+  hover_code_line = TRUE,         #<<
+  mute_unhighlighted_code = TRUE  #<<
+)
+```
+
+# {shinyValidator}: toward a new audit process for Shiny apps quality through CI/CD
+
+### `r Sys.Date()`
+
+.flex.tc[
+.w-30.mr3.center[
+<img class="br-100" width="100px" height="100px" src="assets/images/jpeg/david.jpeg" class="svg-img"/>
+<br>
+.f5[David Granjon]
+
+.small[Senior Expert Data Scientist]
+]
+]
+
+
+```{r js4shiny, echo=FALSE}
+js4shiny::html_setup(stylize = c("fonts", "variables", "code"))
+```
+
+---
+class: inverse center middle title-slide-without-bg title-slide
+# 1. Introduction
+
+---
+class: header_background
+# <img src="assets/images/svg/shiny.svg" width="5%" style="display: inline; margin: auto;" class="svg-img"/> apps may look amazing ...
+
+<br/>
+
+.left[
+- `{Shiny}` is about __10__ years old 😲😲😲. 
+- Today, many tools can make your apps __shining__...
+]
+
+.center[
+```{r, echo = FALSE, out.width='20%'}
+knitr::include_graphics("assets/images/jpeg/outstanding-shiny.jpg")
+```
+]
+
+---
+class: header_background
+# Clothes don't make the man
+
+<br/>
+
+Yet ... too many __unexplained__ syndromes:
+
+--
+
+- The well known "It worked for me ... but not for you" 🤷‍♀️
+- The famous "It was fine yesterday" 😎
+- And many others...
+  
+---
+class: header_background
+# Clothes don't make the man
+
+<br/>
+
+.center[
+<img src="assets/images/svg/404.svg" width="40%" style="display: block; margin: auto;" class="svg-img"/>
+]
+
+Your app may be as beautiful and as cool as you want, it is __useless__ if it does not start/run. 
+
+---
+class: header_background
+# Most Shiny apps are "just" prototypes
+
+<br/>
+
+Why is my app not starting/running ❓
+
+--
+
+Possible answers:
+
+- __Quickly__ developed, no planning 😱
+- No code quality __management__ 😱
+- No __tests__ 😱
+- ...
+
+--
+
+This must stop `r ji("smiling_imp")`!
+
+---
+class: header_background
+# About software validation
+
+<br/>
+
+Check that a product is __conform__ to initial __requirements__ (Software engineering). 
+
+--
+
+For Shiny apps: 
+
+- __Reliability__: is the app doing what it is intended to do?
+- __Stability__: how often does it crash?
+- __Performance/Availability__: is the app fast enough to handle multiple concurrent users?
+
+--
+
+In practice, a few apps meet all these requirements `r ji("smiling_imp")`.
+
+---
+class: header_background
+# Why and when do we need validation?
+
+<br/>
+
+.center[
+<img src="assets/images/svg/404.svg" width="20%" style="display: block; margin: auto;" class="svg-img"/>
+]
+
+--
+
+.small[
+In Pharma, we have a mission to improve and extend people's lives. We are responsible for our products' __safety__ and __efficacy__:
+
+- __GxP__ usage (Good clinical practices).
+- __DMC__ submission : data monitoring committee with external members.
+- ...
+]
+
+--
+
+How do we transition from a __prototype__ to a __production-ready__ tool❓
+
+---
+class: inverse center middle title-slide-without-bg title-slide
+# 2. Production Ready Shiny Apps
+
+```{r, echo = FALSE, out.width='20%', fig.align='center'}
+knitr::include_graphics("assets/images/jpeg/engineering-shiny.jpg")
+```
+
+---
+class: header_background
+# Consolidate Shiny apps projects
+
+<br/>
+
+.panelset[
+.panel[.panel-name[Package your app]
+
+.center[
+<img src="assets/images/svg/golem.svg" width="10%" style="display: block; margin: auto;" class="svg-img"/>
+]
+
+- Easier checking, linting, documentation and testing.
+- Just ... __easier__. 😀
+]
+
+.panel[.panel-name[Manage your __dependencies__]
+
+.center[
+<img src="assets/images/svg/renv.svg" width="10%" style="display: block; margin: auto;" class="svg-img"/>
+]
+
+- Fix package versions.
+- Increased __reproducibility__.
+]
+
+.panel[.panel-name[__Test__ your code]
+
+.center[
+<img src="assets/images/svg/testthat.svg" width="10%" style="display: inline; margin: auto;" class="svg-img"/>
+]
+
+- Unit tests: test business logic. 
+- Server testing: test how Shiny modules or pieces work together (with reactivity).
+- UI testing: test UI components, snapshots, headless-testing (`{shinytest2}`).
+]
+
+.panel[.panel-name[Optimize]
+Are there bottlenecks?
+- __Load__ testing: How does the app behave with 10 simultaneous user? `{shinyloadtest}`.
+- __Profiling__: What part of my app is slow?`{profvis}`.
+- Reactivity: Are there any reactivity issues? <img src="assets/images/svg/reactlog.svg" width="10%" style="display: inline; margin: auto;" class="svg-img"/>.
+]
+
+]
+
+---
+class: header_background
+# Stop ... I am lost ...
+
+<br>
+
+.center[
+<img src="assets/images/svg/sad.svg" width="40%" style="display: block; margin: auto;" class="svg-img"/>
+]
+
+- There are just so many tools! How to use them properly?
+- Is there a way to __automate__ all of this? I just don't have time ... 😞
+
+---
+class: inverse center middle title-slide-without-bg title-slide
+# 3. Leveraging CI/CD
+
+---
+class: header_background
+# What is CI/CD?
+
+<br>
+
+- __Automated__ process:
+
+  - Continuous integration: automatically __check__ new features. 🏥
+  - Continuous deployment: automatically __deploy__ content. ✉️
+
+- Running on a __remote__ environment ☁️:
+  - [Github Actions](https://github.com/features/actions).
+  - [Jenkins](https://www.jenkins.io/).
+  - [Gitlab CI/CD](https://docs.gitlab.com/ee/ci/).
+  
+---
+class: header_background
+# Benefits of using CI/CD?
+
+<br>
+
+- __Automated__.
+- More __reproducible__.
+- __Time saver__.
+- Less duplication.
+
+---
+class: header_background
+# How to activate CI/CD features?
+
+<br>
+
+Not easy 😢
+
+--
+
+- Select __DevOps__ platform (GitLab, GitHub, ...).
+- Add __version control__ (git knowledge).
+- Build custom GitLab runner (optional).
+- Write __CI/CD instructions__ in yaml file (better support for GitHub).
+- Enjoy ...
+
+--
+
+Can't we make things easier❓
+
+---
+class: inverse center middle title-slide-without-bg title-slide
+# 4. Welcome {shinyValidator}
+
+---
+class: header_background
+# {shinyValidator}
+
+<br>
+
+.panelset[
+.panel[.panel-name[Purpose]
+
+- __Eases__ Shiny Apps validation by __providing__ plug and play CI/CD pipelines:
+  - __Lints__ and __checks__ the package code.
+  - Performs a Shiny app __crash test__.
+  - Displays __outputs__ differences: plots, htmlwidgets.
+  - Measure __performance__: load-test, profiling and reactivity checkup.
+  
+All is __integrated__ into a nice HTML report.
+
+]
+
+.panel[.panel-name[Flexible]
+
+.center[
+```{r shinyvalidator-overview, echo=FALSE, out.width='45%'}
+knitr::include_graphics("assets/images/png/shinyValidator.png")
+```
+]
+
+]
+
+.panel[.panel-name[Setup]
+
+- `{shinyValidator}` requires `R >= 4.0.0`.
+- Must be run within a package, especially with `{golem}`.
+- Control R package dependencies with `{renv}` (recommended).
+- Install it:
+.small[
+```{r, eval=FALSE}
+remotes::install_github("Novartis/shinyValidator")
+devtools::load_all()
+```
+]
+- Run `use_validator()`. Set up all required elements.
+
+]
+
+]
+
+---
+class: header_background
+# Live Demo
+
+<br>
+
+Because a demo is better than 30 slides.
+
+---
+class: header_background
+# Thanks 🙏🏻
+
+<br>
+
+- Barret Schloerke (RStudio).
+- Peter Krusche (Novartis).
+- Lucas Widmer (Novartis).
+- Janice Branson (Novartis).
+- Technology & Innovation Team (Novartis): Aleks, Bo, Marie, Dave, David, Mustapha, Ardalan, Bill and Stefan.
+- Christophe Dervieux (RStudio).
+- Sebastien Rochette (ThinkR).
+- Romain Lesur (Insee).
+- Katerina Limpitsouni (unDraw, illustrations).

@@ -57,7 +57,7 @@ xaringanExtra::use_extra_styles(
 
 # {shinyValidator}: toward a new audit process for Shiny apps quality through CI/CD
 
-### `r Sys.Date()`
+### AppsilonConf 2022 `r Sys.Date()`
 
 .flex.tc[
 .w-30.mr3.center[

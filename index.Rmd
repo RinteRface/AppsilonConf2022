@@ -371,3 +371,11 @@ class: header_background
 - Sebastien Rochette (ThinkR).
 - Romain Lesur (Insee).
 - Katerina Limpitsouni (unDraw, illustrations).
+
+
+---
+# Follow me
+
+<br>
+- <img src="assets/images/svg/twitter.svg" width="5%" style="display: inline; margin: auto;" class="svg-img"/> [Twitter](https://twitter.com/divadnojnarg).
+- <img src="assets/images/svg/github.svg" width="5%" style="display: inline; margin: auto;" class="svg-img"/> [Github](https://github.com/DivadNojnarg).
